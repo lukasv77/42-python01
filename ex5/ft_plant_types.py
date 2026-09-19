@@ -4,9 +4,31 @@ class Plant:
     def __init__(self, name: str, height: float, age_days: int,
                  growth_rate: float) -> None:
         self.name = name
-        self._height = height
-        self._age_days = age_days
         self.growth_rate = growth_rate
+        self._height = 0.0
+        self._age_days = 0
+        if self._is_valid_height(height):
+            self._height = height
+        if self._is_valid_age(age_days):
+            self._age_days = age_days
+
+    def _is_valid_height(self, height: float) -> bool:
+        if height < 0:
+            print(f"{self.name}: Error, height can't be negative")
+            return False
+        return True
+
+    def _is_valid_age(self, age_days: int) -> bool:
+        if age_days < 0:
+            print(f"{self.name}: Error, age can't be negative")
+            return False
+        return True
+
+    def get_height(self) -> float:
+        return self._height
+
+    def get_age(self) -> int:
+        return self._age_days
 
     def show(self) -> None:
         print(f'{self.name}: {self._height}cm, {self._age_days} days old')
@@ -18,24 +40,20 @@ class Plant:
         self._age_days += 1
 
     def set_height(self, height: float) -> bool:
-        if height >= 0:
-            self._height = height
-            print(f'Height updated: {round(self._height)}cm')
-            return (True)
-        else:
-            print(f"{self.name}: Error, height can't be negative\n"
-                  f"Height update rejected")
-            return (False)
+        if not self._is_valid_height(height):
+            print("Height update rejected")
+            return False
+        self._height = height
+        print(f"Height updated: {round(self._height, 1)}cm")
+        return True
 
     def set_age(self, age_days: int) -> bool:
-        if age_days >= 0:
-            self._age_days = age_days
-            print(f'Age updated: {self._age_days} days')
-            return (True)
-        else:
-            print(f"{self.name}: Error, age can't be negative\n"
-                  f"Age update rejected")
-            return (False)
+        if not self._is_valid_age(age_days):
+            print("Age update rejected")
+            return False
+        self._age_days = age_days
+        print(f"Age updated: {self._age_days} days")
+        return True
 
 
 class Flower(Plant):
@@ -46,16 +64,15 @@ class Flower(Plant):
         self.bloomed = False
 
     def bloom(self) -> None:
-        print('[asking the rose to bloom]')
         self.bloomed = True
 
     def show(self) -> None:
         super().show()
         print(f' Color: {self.color}')
         if self.bloomed is False:
-            print(' Rose has not bloomed yet')
+            print(f' {self.name} has not bloomed yet')
         else:
-            print(' Rose is blooming beautifully!')
+            print(f' {self.name} is blooming beautifully!')
 
 
 class Tree(Plant):
@@ -65,8 +82,7 @@ class Tree(Plant):
         self.trunk_diameter = trunk_diameter
 
     def produce_shade(self) -> None:
-        print('[asking the oak to produce shade]')
-        print(f'Tree Oak now produces a shade of {self._height}cm long'
+        print(f'Tree {self.name} now produces a shade of {self._height}cm long'
               f' and {self.trunk_diameter}cm wide.')
 
     def show(self) -> None:
@@ -76,11 +92,10 @@ class Tree(Plant):
 
 class Vegetable(Plant):
     def __init__(self, name: str, height: float, age_days: int,
-                 growth_rate: float, harvest_season: str,
-                 nutritional_value: float) -> None:
+                 growth_rate: float, harvest_season: str) -> None:
         super().__init__(name, height, age_days, growth_rate)
         self.harvest_season = harvest_season
-        self.nutritional_value = nutritional_value
+        self.nutritional_value = 0.0
 
     def age(self) -> None:
         super().age()
@@ -99,15 +114,17 @@ class Vegetable(Plant):
 if __name__ == '__main__':
     rose = Flower('Rose', 15.0, 10, 0.8, 'red')
     oak = Tree('Oak', 200.0, 365, 0.8, 5.0)
-    tomato = Vegetable('Tomato', 5.0, 10, 2.1, 'April', 0)
+    tomato = Vegetable('Tomato', 5.0, 10, 2.1, 'April')
 
     print('=== Garden Plant Types ===\n'
           '=== Flower')
     rose.show()
+    print('[asking the rose to bloom]')
     rose.bloom()
     rose.show()
     print('\n=== Tree')
     oak.show()
+    print('[asking the oak to produce shade]')
     oak.produce_shade()
     print('\n=== Vegetable')
     tomato.show()
